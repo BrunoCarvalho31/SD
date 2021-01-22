@@ -1,5 +1,3 @@
-package Main;
-
 import Exceptions.NomeExistenteException;
 import Exceptions.NomeNaoExisteException;
 import Exceptions.PassIncorretaException;
@@ -9,50 +7,71 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.ReentrantLock;
-
+import java.util.concurrent.locks.ReadWriteLock;
 
 public class StayAway {
 
-    private PrintWriter pw;
+    // quase a certeza que os PW nao sao precisos por isso ta tudo comentado e depois apaga-se
+    //private PrintWriter pw;
     private Map<String,User> users;
-    private ReentrantLock lockSA = new ReentrantLock();
+    private ReadWriteLock lockSA = new ReentrantReadWriteLock();
 
     public StayAway(){
         this.users = new HashMap<>();
     }
 
-    public User registar (String nome, String pass) throws NomeExistenteException{
-        pw.println("registar " + nome + " " + pass);
-        pw.flush();
+    public void register (String nome, String pass) throws NomeExistenteException{
+        //pw.println("registar " + nome + " " + pass);
+        //pw.flush();
         try {
-            this.lockSA.lock();
+            this.lockSA.writeLock().lock();
             if(users.containsKey(nome))
                 throw new NomeExistenteException("Nome já existe!");
             else{
                 User u = new User(nome,pass);
                 this.users.put(nome,u);
-                return u;
             }
         }
         finally {
-            this.lockSA.unlock();
+            this.lockSA.writeLock().unlock();
         }
     }
 
     public void login (String nome, String pass) throws NomeNaoExisteException, PassIncorretaException{
         try{
-            this.lockSA.lock();
+            this.lockSA.readLock().lock();
             if(users.get(nome) == null)
                 throw new NomeNaoExisteException("Nome nao encontrado.");
-            if(users.get(pass) == null)
+            else if(users.get(pass) == null)
                 throw new PassIncorretaException("Password incorreta.");
         }
         finally {
-            this.lockSA.unlock();
+            this.lockSA.readLock().unlock();
         }
     }
 
+    public int numeroPessoasLocalizacao(int x, int y){
+        //
+    }
+
+    public void darLocalizacaoAtual(int x, int y, User user){
+        //
+    }
+
+    // dar intencao de se mover para a posicao x,y, receve notificacao de quando estiver vazia
+    public void goTo(int x , int y, User user){
+
+    }
+
+    //
+    public void notificarInfecao()
+    {
+
+    }
+
+    public getMapa(User){
+
+    }
 
 
 }

@@ -1,6 +1,3 @@
-package Main;
-
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,6 +8,8 @@ import java.net.Socket;
 public class ServerWorker implements Runnable{
     private Socket socket;
     private StayAway sa;
+    private String user;
+
 
     public ServerWorker(Socket socket, StayAway sa) {
         this.socket=socket;
@@ -22,24 +21,15 @@ public class ServerWorker implements Runnable{
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(socket.getOutputStream());
-            int sum=0;
-            int n=0;
-            String line;
-            while ((line = in.readLine()) != null) {
-                try {
-                    sum+=Integer.parseInt(line);
-                    n++;
-                }catch(NumberFormatException e)
-                {
-                    ;
-                }
 
-                out.println(sum);
-                out.flush();
+            String line;
+
+            //main cicle
+            while ((line = in.readLine()) != null) {
+                //stuf
             }
-            int avg = sum/n;
-            out.println("the average was: "+avg);
-            out.flush();
+
+            sa.logOut(this.user);
 
             socket.shutdownOutput();
             socket.shutdownInput();
