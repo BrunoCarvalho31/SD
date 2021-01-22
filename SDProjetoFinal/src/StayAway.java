@@ -2,12 +2,10 @@ import Exceptions.NomeExistenteException;
 import Exceptions.NomeNaoExisteException;
 import Exceptions.PassIncorretaException;
 
-import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class StayAway {
 
@@ -28,7 +26,7 @@ public class StayAway {
             if(users.containsKey(nome))
                 throw new NomeExistenteException("Nome já existe!");
             else{
-                User u = new User(nome,pass);
+                User u = new User(nome,pass,0,0,false,false);
                 this.users.put(nome,u);
             }
         }
@@ -52,9 +50,11 @@ public class StayAway {
 
     public int numeroPessoasLocalizacao(int x, int y){
         //
+        int count = 0;
+        return count;
     }
 
-    public void darLocalizacaoAtual(int x, int y, User user){
+    public void novaLocalizacaoAtual(int x, int y, User user){
         //
     }
 
@@ -69,7 +69,7 @@ public class StayAway {
 
     }
 
-    public getMapa(User){
+    public void getMapa(){
 
     }
 
