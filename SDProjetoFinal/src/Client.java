@@ -17,7 +17,7 @@ public class Client {
 
             String userInput;
 
-            Menus.inicial();
+            Menus.inicial(socket, in, out, systemIn);
 
             while ((userInput = systemIn.readLine()) != null) {
                 out.println(userInput);
