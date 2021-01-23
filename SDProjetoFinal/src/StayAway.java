@@ -18,6 +18,10 @@ public class StayAway {
         this.users = new HashMap<>();
     }
 
+    public ReadWriteLock getReadWriteLock(){
+        return this.lockSA
+    }
+
     public void register (String nome, String pass) throws NomeExistenteException{
         //pw.println("registar " + nome + " " + pass);
         //pw.flush();
