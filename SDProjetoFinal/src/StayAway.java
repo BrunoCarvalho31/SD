@@ -30,7 +30,7 @@ public class StayAway {
             if(users.containsKey(nome))
                 throw new NomeExistenteException("Nome já existe!");
             else{
-                User u = new User(nome,pass,0,0,false,false);
+                User u = new User(nome,pass,0,0,false);
                 this.users.put(nome,u);
             }
         }
@@ -53,28 +53,30 @@ public class StayAway {
     }
 
     public int numeroPessoasLocalizacao(int x, int y){
-        //
         int count = 0;
+        for(User u: this.users.values()){
+            if (u.getX() == x && u.getY() == y)
+                count++;
+        }
         return count;
     }
 
-    public void novaLocalizacaoAtual(int x, int y, User user){
-        //
+    public void novaLocalizacaoAtual(int x, int y, String nome){
+        User u = this.users.get(nome);
+        u.setX(x);
+        u.setY(y);
     }
 
     // dar intencao de se mover para a posicao x,y, receve notificacao de quando estiver vazia
-    public void goTo(int x , int y, User user){
-
+    public void goTo(int x , int y, String nome){
     }
 
-    //
-    public void notificarInfecao()
+    public void notificarInfecao(String nome)
     {
 
     }
 
     public void getMapa(){
-
     }
 
 

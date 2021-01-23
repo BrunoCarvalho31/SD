@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
 
     private String nome;
@@ -6,14 +9,18 @@ public class User {
     private int y;
     private boolean doente;
     private boolean vip;
+    private List <Integer> caminhoX;
+    private List <Integer> caminhoY;
 
-    public User (String nome, String pass, int x, int y, boolean doente, boolean vip){
+    public User (String nome,String pass,int x, int y,boolean vip){
         this.nome = nome;
         this.pass = pass;
         this.x = x;
         this.y = y;
-        this.doente = doente;
+        this.doente = false;
         this.vip = vip;
+        this.caminhoX = new ArrayList<Integer>();
+        this.caminhoY = new ArrayList<Integer>();
     }
 
     public String getNome() {
@@ -48,7 +55,7 @@ public class User {
         this.y = y;
     }
 
-    public boolean isVIP() {
+    public boolean VIP() {
         return vip;
     }
 
@@ -64,7 +71,19 @@ public class User {
         this.doente = doente;
     }
 
+    public List<Integer> getCaminhoX() {
+        return caminhoX;
+    }
 
+    public void setCaminhoX(List<Integer> caminhoX) {
+        this.caminhoX = caminhoX;
+    }
 
+    public List<Integer> getCaminhoY() {
+        return caminhoY;
+    }
 
+    public void setCaminhoY(List<Integer> caminhoY) {
+        this.caminhoY = caminhoY;
+    }
 }
