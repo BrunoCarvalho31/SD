@@ -4,6 +4,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import Exceptions.*;
+import java.util.concurrent.locks.ReadWriteLock;
 
 public class ServerWorker implements Runnable{
     private Socket socket;
@@ -27,7 +29,7 @@ public class ServerWorker implements Runnable{
 
             //main cicle
             while ((line = in.readLine()) != null) {
-                String[] args = line.split("\s");   // em principeo isto separa a string em string novas com o delimitador de espaco
+                String[] args = line.split(" ");   // em principeo isto separa a string em string novas com o delimitador de espaco
                                                     // é possivel que seja melhor em vez do espaco usar um simbolo como delimitador ou ser mesmo fancy e meter tipo \e (corresponde ao caracter do escape)
                 switch (args[0]){
                     case "login":
@@ -62,14 +64,15 @@ public class ServerWorker implements Runnable{
 
     private void login(String username, String pass, PrintWriter out){
         try{
-            boolean vip=sa.login(username,pass);
+            sa.login(username,pass);
+            boolean vip = sa.isVIP(username);
             if(vip)
             {
-                out.print("0");    
+                out.print("4");
             }
             else if(!vip)
             {
-               out.print("4"); 
+               out.print("0");
             }
             
         } catch(PassIncorretaException e) {
@@ -83,7 +86,7 @@ public class ServerWorker implements Runnable{
         }
     }
 
-    private void register(String usarname, String pass, PrintWriter out){
+    private void register(String username, String pass, PrintWriter out){
         try{
             this.sa.register(username,pass);
             out.print("0");
@@ -107,13 +110,10 @@ public class ServerWorker implements Runnable{
 
     private void infected(String user,PrintWriter out)
     {
-        this.sa.infected(username);
+        this.sa.infected(user);
     }
-
-    private void nrpeople(int x, int y, PrintWriter out){
-        int n = this.sa.nrpeople();
+    private void nrpeople(String user, String cx, String cy, PrintWriter out){
+        this.sa.numeroPessoasLocalizacao(Integer.parseInt(cx),Integer.parseInt(cy));
     }
-
-
 
 }
