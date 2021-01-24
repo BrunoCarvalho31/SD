@@ -94,10 +94,10 @@ public class Menus {
                     System.out.println("infetado");
                     break;
                 case "4":
-                    afterLoginVIP(socket, in, out, systemIn, cx, cy, username, response,username);
+                    afterLoginVIP(socket, in, out, systemIn,username);
                     break;
                 case "0":
-                    afterLogin(socket, in, out, systemIn, cx, cy, username, response,username);
+                    afterLogin(socket, in, out, systemIn, username);
                     break;
                 default:
                     System.out.println("opcao invalida");
@@ -147,14 +147,14 @@ public class Menus {
     }
 
 
-    public static void move(Socket socket,BufferedReader in,PrintWriter out,BufferedReader systemIn,int cx,int cy,String username,String response ){
+    public static void move(Socket socket,BufferedReader in,PrintWriter out,BufferedReader systemIn,String username ){
         try {
             System.out.println("coord x:");
-            cx = Integer.parseInt(systemIn.readLine());
+            int cx = Integer.parseInt(systemIn.readLine());
             System.out.println("coord y:");
-            cy = Integer.parseInt(systemIn.readLine());
+            int cy = Integer.parseInt(systemIn.readLine());
             out.println("move " + username + " " + cx + " " + cy);
-            response = in.readLine();
+            String response = in.readLine();
             while (response.equals("0"))//resposta: 0: nao pode mover, 1: moveu
             {
                 System.out.println("pfv espera");
@@ -167,14 +167,14 @@ public class Menus {
     }
 
 
-    public static void nrPessoas(Socket socket,BufferedReader in,PrintWriter out,BufferedReader systemIn,int cx,int cy,String username,String response ){
+    public static void nrPessoas(Socket socket,BufferedReader in,PrintWriter out,BufferedReader systemIn,String username ){
         try {
             System.out.println("coord x:");
-            cx = Integer.parseInt(systemIn.readLine());
+            int cx = Integer.parseInt(systemIn.readLine());
             System.out.println("coord y:");
-            cy = Integer.parseInt(systemIn.readLine());
+            int cy = Integer.parseInt(systemIn.readLine());
             out.println("nrpeople " + username + " " + cx + " " + cy);
-            response = in.readLine();
+            String response = in.readLine();
             System.out.println(response);
         }catch (Exception e){
             e.printStackTrace();
@@ -182,22 +182,22 @@ public class Menus {
     }
 
 
-    public static void afterLogin(Socket socket,BufferedReader in,PrintWriter out,BufferedReader systemIn,int cx,int cy,String username,String response,String userInput){
+    public static void afterLogin(Socket socket,BufferedReader in,PrintWriter out,BufferedReader systemIn, String username){
         try {
             boolean quit = false;
             while (!quit) {
                 menuLogin();
-                userInput = systemIn.readLine();
+                String userInput = systemIn.readLine();
                 switch (userInput) {
                     case "1"://move
-                        move(socket, in, out, systemIn, cx, cy, username, response);
+                        move(socket, in, out, systemIn,username);
                         break;
                     case "2"://infetado
                         out.println("infected " + username);
                         quit = true;
                         break;
                     case "3"://nrpessoas
-                        nrPessoas(socket, in, out, systemIn, cx, cy, username, response);
+                        nrPessoas(socket, in, out, systemIn, username);
                         break;
                     case "0"://quit
                         quit = true;
@@ -213,26 +213,26 @@ public class Menus {
     }
 
 
-    public static void afterLoginVIP(Socket socket,BufferedReader in,PrintWriter out,BufferedReader systemIn,int cx,int cy,String username,String response,String userInput){
+    public static void afterLoginVIP(Socket socket,BufferedReader in,PrintWriter out,BufferedReader systemIn,String username){
         try {
             boolean quit = false;
             while (!quit) {
                 menuLoginVIP();
-                userInput = systemIn.readLine();
+                String userInput = systemIn.readLine();
                 switch (userInput) {
                     case "1"://move
-                        move(socket, in, out, systemIn, cx, cy, username, response);
+                        move(socket, in, out, systemIn, username);
                         break;
                     case "2"://infetado
                         out.println("infected " + username);
                         quit = true;
                         break;
                     case "3"://nrpessoas
-                        nrPessoas(socket, in, out, systemIn, cx, cy, username, response);
+                        nrPessoas(socket, in, out, systemIn, username);
                         break;
                     case "4": // mostra o mapa
                         out.println("mapa");
-                        response = in.readLine();
+                        String response = in.readLine();
                         break;
                     case "0"://quit
                         quit = true;
