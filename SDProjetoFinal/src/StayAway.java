@@ -1,6 +1,7 @@
 import Exceptions.NomeExistenteException;
 import Exceptions.NomeNaoExisteException;
 import Exceptions.PassIncorretaException;
+import Exceptions.UtilizadorInfetadoException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +20,7 @@ public class StayAway {
     }
 
     public ReadWriteLock getReadWriteLock(){
-        return this.lockSA
+        return this.lockSA;
     }
 
     public void register (String nome, String pass) throws NomeExistenteException{
@@ -39,13 +40,15 @@ public class StayAway {
         }
     }
 
-    public void login (String nome, String pass) throws NomeNaoExisteException, PassIncorretaException{
+    public void login (String nome, String pass) throws NomeNaoExisteException, PassIncorretaException, UtilizadorInfetadoException {
         try{
             this.lockSA.readLock().lock();
             if(users.get(nome) == null)
                 throw new NomeNaoExisteException("Nome nao encontrado.");
             else if(users.get(pass) == null)
                 throw new PassIncorretaException("Password incorreta.");
+            else if(users.get(nome).isDoente() == true)
+                throw new UtilizadorInfetadoException("Encontra-se infetado");
         }
         finally {
             this.lockSA.readLock().unlock();
@@ -71,13 +74,31 @@ public class StayAway {
     public void goTo(int x , int y, String nome){
     }
 
-    public void notificarInfecao(String nome)
-    {
-
-    }
-
     public void getMapa(){
     }
 
+    public boolean isVIP(String username) {
+        return this.users.get(username).VIP();
+    }
 
+
+    public static void tornarVIP(String username){
+        this.users.get(username).setVIP(true);
+    }
+
+    public void move(String user, int x, int y) {
+        if(numeroPessoasLocalizacao(x,y) > 0){
+            //wait
+        }else{
+            novaLocalizacaoAtual(x,y,user);
+        }
+
+    }
+
+    public void logOut(String user) {
+    }
+
+    public void infected(String user) {
+        //notificar de infeçao
+    }
 }

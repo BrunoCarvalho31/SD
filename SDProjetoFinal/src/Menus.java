@@ -81,7 +81,7 @@ public class Menus {
             System.out.println("pass:");
             String pass = systemIn.readLine();
             out.println("login " + username + " " + pass);
-            response = in.readLine(); // responde 0 para log in correto, ou 1 para username errado, 2 para pass errada, 3 pessoa imp.
+            response = in.readLine(); // responde 0 para log in correto, ou 1 para username errado, 2 para pass errada, 3 infetado, 4 vip
 
             switch (response) {
                 case "1":
@@ -123,6 +123,16 @@ public class Menus {
             switch (response) {
                 case "1":
                     System.out.println("registo com sucesso");
+                    System.out.println("E VIP ? (y or n)");
+                    String isvip = systemIn.readLine();
+                    if(isvip == "y"){
+                        System.out.println("Digite o codigo");
+                        String code = systemIn.readLine();
+                        String codigovip = "12345";
+                        if (code == codigovip){
+                            StayAway.tornarVIP(username);
+                        }
+                    }
                     break;
                 case "2":
                     System.out.println("username ja existe");
@@ -237,6 +247,9 @@ public class Menus {
         }
 
     }
+
+
+
 
 }
 
