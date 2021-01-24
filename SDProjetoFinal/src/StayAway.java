@@ -53,22 +53,41 @@ public class StayAway {
     }
 
     public int numeroPessoasLocalizacao(int x, int y){
-        int count = 0;
-        for(User u: this.users.values()){
-            if (u.getX() == x && u.getY() == y)
-                count++;
+        try{
+            this.lockSA.readLock().lock();
+            int count = 0;
+            for(User u: this.users.values()){
+                if (u.getX() == x && u.getY() == y)
+                    count++;
+            }
+        }
+        finally {
+            this.lockSA.readLock().unlock();
         }
         return count;
     }
 
     public void novaLocalizacaoAtual(int x, int y, String nome){
-        User u = this.users.get(nome);
-        u.setX(x);
-        u.setY(y);
+        try{
+                User u = this.users.get(nome);
+                u.setX(x);
+                u.setY(y);
+        }
+        finally {
+            this.lockSA.writeLock().unlock();
+        }
     }
 
     // dar intencao de se mover para a posicao x,y, receve notificacao de quando estiver vazia
-    public void goTo(int x , int y, String nome){
+    public void move(int x , int y, String nome){
+        try{
+                User u = this.users.get(nome);
+                u.setX(x);
+                u.setY(y);
+        }
+        finally {
+            this.lockSA.writeLock().unlock();
+        }
     }
 
     public void notificarInfecao(String nome)
@@ -77,6 +96,7 @@ public class StayAway {
     }
 
     public void getMapa(){
+        
     }
 
 

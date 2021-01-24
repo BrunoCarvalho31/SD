@@ -43,7 +43,7 @@ public class ServerWorker implements Runnable{
                         infected(args[1],out);
                         break;
                     case "nrpeople":
-                        nrpeople(args[1],args[2],out);
+                        nrpeople(Integer.parseInt(args[1]),Integer.parseInt(args[2]),out);
                         break;
                     default :
                         break;
@@ -96,8 +96,13 @@ public class ServerWorker implements Runnable{
 
     private void move(String user, String x ,String y, PrintWriter out)
     {   // o move devolde um bool, se falso faz wait, se true faz signal all
-        this.sa.move(username,Integer.parseInt(x),Integer.parseInt(y));
-        out.print("0");
+        try{
+                this.sa.move(username,Integer.parseInt(x),Integer.parseInt(y));
+                out.print("0");
+        }catch(LugarNaoVazioException e)
+        {
+            out.print("1");
+        }
     }
 
     private void infected(String user,PrintWriter out)
@@ -105,9 +110,8 @@ public class ServerWorker implements Runnable{
         this.sa.infected(username);
     }
 
-    private void nrpeople(){
-        this.sa.nrpeople();
-
+    private void nrpeople(int x, int y, PrintWriter out){
+        int n = this.sa.nrpeople();
     }
 
 
