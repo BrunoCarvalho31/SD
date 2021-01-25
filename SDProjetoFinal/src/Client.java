@@ -1,12 +1,12 @@
 import java.net.Socket;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
+
 
 public class Client {
 
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) {
         try {
             Socket socket = new Socket("localhost", 12345);
 
@@ -14,7 +14,6 @@ public class Client {
 
             BufferedReader systemIn = new BufferedReader(new InputStreamReader(System.in));
 
-            String userInput;
             try{
                 Menus.inicial(socket, fc, systemIn);
             }finally{

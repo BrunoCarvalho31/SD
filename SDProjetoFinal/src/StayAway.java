@@ -9,26 +9,14 @@ import java.util.concurrent.locks.*;
 
 public class StayAway {
 
-    private static int N = 10;
+    private static final int N = 10;
     private final Map<String,User> users;
     private final ReadWriteLock lockSA = new ReentrantReadWriteLock();
-    private final Lock l = new ReentrantLock();
+
 
     public StayAway(){
         this.users = new HashMap<>();
     }
-
-    public ReadWriteLock getReadWriteLock(){
-        return this.lockSA;
-    }
-
-    public Condition getCond(){
-        return this.l.newCondition();
-    }
-
-    public Lock getLock(){
-        return this.l;
-    } 
 
     public void register (String nome, String pass) throws NomeExistenteException{
         try {

@@ -1,17 +1,11 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 import Exceptions.*;
-import java.io.*; 
-import java.util.*;
 
-import java.util.concurrent.locks.*;
 
 public class ServerWorker implements Runnable{
     private final Socket socket;
     private final StayAway sa;
-    private String user;
+
 
     private static final int N =10;
 
