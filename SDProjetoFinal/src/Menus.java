@@ -40,7 +40,7 @@ public class Menus {
 
 
 
-    public static void inicial(Socket socket, BufferedReader in, PrintWriter out, BufferedReader systemIn) {
+    public static void inicial(Socket socket, FramedConnection fc, BufferedReader systemIn) {
         try {
             String userInput;
             boolean quit = false;
@@ -49,10 +49,10 @@ public class Menus {
                 userInput = systemIn.readLine();
                 switch (userInput) {
                     case "1": //login
-                        caseLogin(in,out,systemIn);
+                        caseLogin(fc,systemIn);
                         break;
                     case "2": //registar
-                        caseSignUp(in,out,systemIn);
+                        caseSignUp(fc,systemIn);
                         break;
                     case "0": //quit
                         quit = true;
@@ -73,18 +73,28 @@ public class Menus {
     }
 
 
-    public static void caseLogin(BufferedReader in, PrintWriter out, BufferedReader systemIn){
+    public static void caseLogin(FramedConnection fc, BufferedReader systemIn){
         try{
             String response;
             System.out.println("username:");
             String username = systemIn.readLine();
             System.out.println("pass:");
             String pass = systemIn.readLine();
-            out.println("login " + username + " " + pass);
-            out.flush();
-            System.out.println("client antes da resposta");
-            response = in.readLine(); // responde 0 para log in correto, ou 1 para username errado, 2 para pass errada, 3 infetado, 4 vip
-            System.out.println("client depois da resposta" + response);
+
+            fc.send(("login " + username + " " + pass).getBytes() );
+            //fc.send(username.getBytes() );
+            //fc.send(pass.getBytes() );
+
+            //out.println("login " + username + " " + pass);
+            //out.flush();
+
+            byte[] b1 = fc.receive();
+            response = new String(b1);
+            
+            //System.out.println("client antes da resposta");
+            //response = in.readLine(); // responde 0 para log in correto, ou 1 para username errado, 2 para pass errada, 3 infetado, 4 vip
+            //System.out.println("client depois da resposta" + response);
+            
             switch (response) {
                 case "login 1":
                     System.out.println("pass incorreta");
@@ -96,10 +106,10 @@ public class Menus {
                     System.out.println("infetado");
                     break;
                 case "login 4":
-                    afterLoginVIP(in, out, systemIn,username);
+                    afterLoginVIP(fc, systemIn,username);
                     break;
                 case "login 0":
-                    afterLogin(in, out, systemIn, username);
+                    afterLogin(fc, systemIn, username);
                     break;
                 default:
                     System.out.println("opcao invalida" + response);
@@ -112,18 +122,26 @@ public class Menus {
     }
 
 
-    public static void caseSignUp( BufferedReader in, PrintWriter out, BufferedReader systemIn){
+    public static void caseSignUp( FramedConnection fc, BufferedReader systemIn){
         try {
             System.out.println("username:");
             String username = systemIn.readLine();
             System.out.println("pass:");
             String pass = systemIn.readLine();
 
-            out.println("register " + username + " " + pass);
-            out.flush();
+            fc.send(("register " + username + " " + pass).getBytes() );
+            // fc.send(username.getBytes() );
+            // fc.send(pass.getBytes() );
 
-            String response = in.readLine(); // responde 0 para registar correto, ou username ja existe
+            byte[] b1 = fc.receive();
+            String response = new String(b1);
 
+
+
+            //out.println("register " + username + " " + pass);
+            //out.flush();
+
+            //String response = in.readLine(); // responde 0 para registar correto, ou username ja existe
             switch (response) {
                 case "register 0":
                     System.out.println("registo com sucesso");
@@ -134,8 +152,9 @@ public class Menus {
                         String code = systemIn.readLine();
                         if (code.equals(codigovip) ){
                             //StayAway.tornarVIP(username);
-                            out.println("makeVIP " + username);
-                            out.flush();
+                            fc.send(("makeVIP " + username ).getBytes() );
+                            //fc.send(username.getBytes() );
+
                             System.out.println("codigo correto");
                         }
                         else{
@@ -143,7 +162,7 @@ public class Menus {
                         }
                     }
                     else if(!isvip.equals("n")){
-                        System.out.println("opcap invalida, a a conta foi criada como utilizador normal");
+                        System.out.println("opcao invalida, a a conta foi criada como utilizador normal");
                     }
                     break;
                 case "register 1":
@@ -159,16 +178,22 @@ public class Menus {
     }
 
 
-    public static void move(BufferedReader in,PrintWriter out,BufferedReader systemIn,String username ){
+    public static void move(FramedConnection fc,BufferedReader systemIn,String username ){
         try {
             System.out.println("coord x:");
             int cx = Integer.parseInt(systemIn.readLine());
             System.out.println("coord y:");
             int cy = Integer.parseInt(systemIn.readLine());
-            out.println("move " + username + " " + cx + " " + cy);
-            out.flush();
+
+            fc.send( ("move "+username+" "+ cx + " " + cy).getBytes() );
+            // fc.send(username.getBytes() );
+            // fc.send((String.valueOf(cx)).getBytes());
+            // fc.send((String.valueOf(cy)).getBytes());
+            //out.println("move " + username + " " + cx + " " + cy);
+            //out.flush();
+
             System.out.println("antes do while do move");
-            while( in.readLine().equals("move 0") )//resposta: 0: nao pode mover, 1: moveu
+            while( (new String ( fc.receive() ) ).equals("move 0") )//resposta: 0: nao pode mover, 1: moveu
             {
                 ;
             }
@@ -179,15 +204,21 @@ public class Menus {
     }
 
 
-    public static void nrPessoas(BufferedReader in,PrintWriter out,BufferedReader systemIn,String username ){
+    public static void nrPessoas(FramedConnection fc,BufferedReader systemIn,String username ){
         try {
             System.out.println("coord x:");
             int cx = Integer.parseInt(systemIn.readLine());
             System.out.println("coord y:");
             int cy = Integer.parseInt(systemIn.readLine());
-            out.println("nrpeople " + username + " " + cx + " " + cy);
-            out.flush();
-            String response = in.readLine();
+
+            fc.send(("nrpeople "+username+" "+ cx + " " + cy).getBytes() );
+            // fc.send(username.getBytes() );
+            // fc.send((String.valueOf(cx)).getBytes());
+            // fc.send((String.valueOf(cy)).getBytes());
+
+            //out.println("nrpeople " + username + " " + cx + " " + cy);
+            //out.flush();
+            String response = (new String ( fc.receive() ) );
             System.out.println(response);
         }catch (Exception e){
             e.printStackTrace();
@@ -195,7 +226,7 @@ public class Menus {
     }
 
 
-    public static void afterLogin(BufferedReader in,PrintWriter out,BufferedReader systemIn, String username){
+    public static void afterLogin(FramedConnection fc,BufferedReader systemIn, String username){
         try {
             boolean quit = false;
             while (!quit) {
@@ -203,14 +234,16 @@ public class Menus {
                 String userInput = systemIn.readLine();
                 switch (userInput) {
                     case "1"://move
-                        move(in, out, systemIn,username);
+                        move(fc, systemIn,username);
                         break;
                     case "2"://infetado
-                        out.println("infected " + username);
+                        //out.println("infected " + username);
+                        fc.send(("infected " + username).getBytes() );
+                        //fc.send(username.getBytes() );
                         quit = true;
                         break;
                     case "3"://nrpessoas
-                        nrPessoas(in, out, systemIn, username);
+                        nrPessoas(fc, systemIn, username);
                         break;
                     case "0"://quit
                         quit = true;
@@ -226,7 +259,7 @@ public class Menus {
     }
 
 
-    public static void afterLoginVIP(BufferedReader in,PrintWriter out,BufferedReader systemIn,String username){
+    public static void afterLoginVIP(FramedConnection fc,BufferedReader systemIn,String username){
         try {
             boolean quit = false;
             while (!quit) {
@@ -234,21 +267,31 @@ public class Menus {
                 String userInput = systemIn.readLine();
                 switch (userInput) {
                     case "1"://move
-                        move(in, out, systemIn, username);
+                        move(fc, systemIn, username);
                         break;
                     case "2"://infetado
-                        out.println("infected " + username);
+                        fc.send(("infected "+ username).getBytes() );
+                        //fc.send(username.getBytes() );
+                        //out.println("infected " + username);
                         quit = true;
                         break;
                     case "3"://nrpessoas
-                        nrPessoas(in, out, systemIn, username);
+                        nrPessoas(fc, systemIn, username);
                         break;
                     case "4": // mostra o mapa
-                        out.println("mapa " + username);
-                        String response = in.readLine();
+
+                        fc.send(("mapa "+username).getBytes() );
+                        //fc.send(username.getBytes() );
+                        String response = (new String ( fc.receive() ) );
                         System.out.println("infetados" + response);
-                        response = in.readLine();
+                        response = (new String ( fc.receive() ) );
                         System.out.println("visitantes" + response);
+
+                        // out.println("mapa " + username);
+                        // String response = in.readLine();
+                        // System.out.println("infetados" + response);
+                        // response = in.readLine();
+                        // System.out.println("visitantes" + response);
 
                         break;
                     case "0"://quit

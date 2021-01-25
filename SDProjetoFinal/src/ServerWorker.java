@@ -3,6 +3,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import Exceptions.*;
+import java.io.*; 
+import java.util.*;
 
 import java.util.concurrent.locks.*;
 
@@ -19,40 +21,41 @@ public class ServerWorker implements Runnable{
 
     public void run() {
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(socket.getOutputStream());
+            FramedConnection fc = new FramedConnection(socket);
+
             System.out.println("sou o novo thread");
-            String line;
+            String line= new String ( fc.receive() ) ;
 
             //main cicle
-            while ((line = in.readLine()) != null) {
+            while (line!=null) {
                 System.out.println("\n" + line + " esta foi a linha recebida");
                 String[] args = line.split(" ");   // em principio isto separa a string em string novas com o delimitador de espaco
                                                     // é possivel que seja melhor em vez do espaco usar um simbolo como delimitador ou ser mesmo fancy e meter tipo \e (corresponde ao caracter do escape)
                 
                 switch (args[0]){
                     case "login":
-                        login(args[1],args[2],out);
+                        login(args[1],args[2],fc);
                         break;
                     case "register":
-                        register(args[1],args[2],out);
+                        register(args[1],args[2],fc);
                         break;
                     case "move":
-                        move(args[1],args[2],args[3],out);
+                        move(args[1],args[2],args[3],fc);
                         break;
                     case  "infected":
-                        infected(args[1],out);
+                        infected(args[1],fc);
                         break;
                     case "nrpeople":
-                        nrpeople(args[1],args[2],args[3],out);
+                        nrpeople(args[1],args[2],args[3],fc);
                         break;
                     case "makeVIP":
                         this.sa.tornarVIP(args[1]);
                     case "mapa":
-                        getMapas(args[1],out);
+                        getMapas(args[1],fc);
                     default :
                         break;
                 }
+                line= new String ( fc.receive() ) ;
             }
 
             socket.shutdownOutput();
@@ -63,54 +66,53 @@ public class ServerWorker implements Runnable{
         }
     }
 
-    private void login(String username, String pass, PrintWriter out){
+    private void login(String username, String pass, FramedConnection fc){
         try{
-            sa.login(username,pass);
-            boolean vip = sa.isVIP(username);
-            if(vip)
-            {
-                out.println("login 4");
-                System.out.println("dentro do log4");
-                out.flush();
-            }
-            else
-            {
-               out.println("login 0");
-               System.out.println("dentro do log0");
-               out.flush();
-            }
+            try{
+                sa.login(username,pass);
+                boolean vip = sa.isVIP(username);
+                if(vip)
+                {
+                    //out.println("login 4");
+                    fc.send("login 4".getBytes());
+                    //System.out.println("dentro do log4");
+                    //out.flush();
+                }
+                else
+                {
+                    fc.send("login 0".getBytes());
+                }
 
-        } catch(PassIncorretaException e) {
-            out.println("login 1");
-            System.out.println("dentro do log1");
-            out.flush();
-        
-        } catch(NomeNaoExisteException e) {
-            out.println("login 2");
-            System.out.println("dentro do log2");
-            out.flush();
+            } catch(PassIncorretaException e) {
+               fc.send("login 1".getBytes());
 
-        } catch(UtilizadorInfetadoException e) {
-            out.println("login 3");
-            System.out.println("dentro do log3");
-            out.flush();
+            } catch(NomeNaoExisteException e) {
+               fc.send("login 2".getBytes());
+
+            } catch(UtilizadorInfetadoException e) {
+               fc.send("login 3".getBytes());
+            }
+        } catch(Exception e){
+            ;
         }
     }
 
-    private void register(String username, String pass, PrintWriter out){
+    private void register(String username, String pass, FramedConnection fc){
         try{
-            this.sa.register(username,pass);
-            out.println("register 0");
-            out.flush();
+            try{
+                this.sa.register(username,pass);
+                fc.send("register 0".getBytes());
 
-        } catch(NomeExistenteException e) {
-            out.println("register 1");
-            out.flush();
-        
+            } catch(NomeExistenteException e) {
+                fc.send("register 1".getBytes());
+            } 
+        }catch(Exception e)
+        {
+            ;
         }
     }
 
-    private void move(String user, String x ,String y, PrintWriter out)
+    private void move(String user, String x ,String y, FramedConnection fc)
     {   // o move devolde um bool, se falso faz wait, se true faz signal all
 
         //Condition cond = this.sa.getCond();
@@ -118,14 +120,14 @@ public class ServerWorker implements Runnable{
         //l.lock();
         try{
             while( !this.sa.move(Integer.parseInt(x),Integer.parseInt(y),user) ){
-                out.println("move 0"); //isto acontece se NAO se puder mover
-                out.flush();
+                fc.send("move 0".getBytes());
+                //out.println("move 0"); //isto acontece se NAO se puder mover
+                //out.flush();
                 System.out.println("antes do  wait");
                 //cond.await();
                 Thread.sleep(500);
             }
-            out.println("move 1");
-            out.flush();
+            fc.send("move 1".getBytes());
             //cond.signalAll();
         }
         catch(Exception e)
@@ -138,37 +140,45 @@ public class ServerWorker implements Runnable{
         
     }
 
-    private void infected(String user,PrintWriter out)
+    private void infected(String user,FramedConnection fc)
     {
         this.sa.infected(user);
     }
     
-    private void nrpeople(String user, String cx, String cy, PrintWriter out){
-        try {
-            int n = this.sa.numeroPessoasLocalizacao(user,Integer.parseInt(cx),Integer.parseInt(cy));
-            out.println("exitem " + n + " pessoas nessa localizacao");
-            out.flush();
-        }catch(UtilizadorInfetadoException e) {
-            out.println("utilizador infetado");
-            out.flush();
+    private void nrpeople(String user, String cx, String cy, FramedConnection fc){
+        try{
+            try {
+                int n = this.sa.numeroPessoasLocalizacao(user,Integer.parseInt(cx),Integer.parseInt(cy));
+                fc.send(("exitem " + n + " pessoas nessa localizacao").getBytes()  );
+            }catch(UtilizadorInfetadoException e) {
+                fc.send("utilizador infetado".getBytes());
+            //out.println("utilizador infetado");
+            //out.flush();
+            }
+            
+        }catch(Exception e){
+            ;
         }
     }
 
-    private void getMapas(String nome, PrintWriter out)
+    private void getMapas(String nome, FramedConnection fc)
     {   
         try{
-            int [][] infec = this.sa.getMapaDoentes(nome);
-            int [][] vis = this.sa.getMapaVisitantes(nome);
-            out.println(infec);
-            out.flush();
-            out.println(vis);
-            out.flush();    
-        }catch(UtilizadorInfetadoException e)
+            try{
+                int [][] infec = this.sa.getMapaDoentes(nome);
+                int [][] vis = this.sa.getMapaVisitantes(nome);
+                fc.send( Arrays.toString(infec).getBytes());
+                fc.send( Arrays.toString(vis).getBytes());
+
+            }catch(UtilizadorInfetadoException e)
+            {
+                fc.send( "utilizador infetado".getBytes());
+                fc.send( "".getBytes());
+            }
+
+        }catch(Exception e)
         {
-            out.println("utilizador infetado");
-            out.flush();
-            out.println("");
-            out.flush();
+            ;
         }
         
     }
