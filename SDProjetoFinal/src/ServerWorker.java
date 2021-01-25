@@ -22,7 +22,6 @@ public class ServerWorker implements Runnable{
 
             //main cicle
             while (line!=null) {
-                System.out.println("\n" + line + " esta foi a linha recebida");
                 String[] args = line.split(" ");   
 
                 switch (args[0]){
