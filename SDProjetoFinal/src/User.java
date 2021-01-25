@@ -94,7 +94,6 @@ public class User {
     }
 
     public boolean isIn(int xx,  int yy){
-        System.out.println("oq ue foi ao users " + xx +" " + yy +"%%" +this.x + " " + this.y + (xx==this.x && yy==this.y));
         return xx==this.x && yy==this.y;
     }
 

@@ -84,19 +84,9 @@ public class Menus {
             String pass = systemIn.readLine();
 
             fc.send(("login " + username + " " + pass).getBytes() );
-            //fc.send(username.getBytes() );
-            //fc.send(pass.getBytes() );
-
-            //out.println("login " + username + " " + pass);
-            //out.flush();
 
             byte[] b1 = fc.receive();
             response = new String(b1);
-            
-            //System.out.println("client antes da resposta");
-            //response = in.readLine(); // responde 0 para log in correto, ou 1 para username errado, 2 para pass errada, 3 infetado, 4 vip
-            //System.out.println("client depois da resposta" + response);
-            
             switch (response) {
                 case "login 1":
                     System.out.println("pass incorreta");
@@ -132,18 +122,11 @@ public class Menus {
             String pass = systemIn.readLine();
 
             fc.send(("register " + username + " " + pass).getBytes() );
-            // fc.send(username.getBytes() );
-            // fc.send(pass.getBytes() );
 
             byte[] b1 = fc.receive();
             String response = new String(b1);
 
 
-
-            //out.println("register " + username + " " + pass);
-            //out.flush();
-
-            //String response = in.readLine(); // responde 0 para registar correto, ou username ja existe
             switch (response) {
                 case "register 0":
                     System.out.println("registo com sucesso");
@@ -153,10 +136,8 @@ public class Menus {
                         System.out.println("Digite o codigo");
                         String code = systemIn.readLine();
                         if (code.equals(codigovip) ){
-                            //StayAway.tornarVIP(username);
+  
                             fc.send( ("makeVIP " + username ).getBytes() );
-
-                            //fc.send(username.getBytes() );
 
                             System.out.println("codigo correto");
                         }
@@ -189,13 +170,6 @@ public class Menus {
             int cy = Integer.parseInt(systemIn.readLine());
 
             fc.send( ("move "+username+" "+ cx + " " + cy).getBytes() );
-            // fc.send(username.getBytes() );
-            // fc.send((String.valueOf(cx)).getBytes());
-            // fc.send((String.valueOf(cy)).getBytes());
-            //out.println("move " + username + " " + cx + " " + cy);
-            //out.flush();
-
-            System.out.println("antes do while do move");
             while( (new String ( fc.receive() ) ).equals("move 0") )//resposta: 0: nao pode mover, 1: moveu
             {
                 ;
@@ -215,19 +189,13 @@ public class Menus {
             int cy = Integer.parseInt(systemIn.readLine());
 
             fc.send(("nrpeople "+username+" "+ cx + " " + cy).getBytes() );
-            // fc.send(username.getBytes() );
-            // fc.send((String.valueOf(cx)).getBytes());
-            // fc.send((String.valueOf(cy)).getBytes());
 
-            //out.println("nrpeople " + username + " " + cx + " " + cy);
-            //out.flush();
             String response = (new String ( fc.receive() ) );
             System.out.println(response);
         }catch (Exception e){
             e.printStackTrace();
         }
     }
-
 
     public static void afterLogin(FramedConnection fc,BufferedReader systemIn, String username){
         try {
@@ -240,9 +208,7 @@ public class Menus {
                         move(fc, systemIn,username);
                         break;
                     case "2"://infetado
-                        //out.println("infected " + username);
                         fc.send(("infected " + username).getBytes() );
-                        //fc.send(username.getBytes() );
                         quit = true;
                         break;
                     case "3"://nrpessoas
@@ -274,8 +240,7 @@ public class Menus {
                         break;
                     case "2"://infetado
                         fc.send(("infected "+ username).getBytes() );
-                        //fc.send(username.getBytes() );
-                        //out.println("infected " + username);
+
                         quit = true;
                         break;
                     case "3"://nrpessoas
@@ -284,11 +249,7 @@ public class Menus {
                     case "4": // mostra o mapa
 
                         fc.send(("mapa "+username).getBytes() );
-                        //fc.send(username.getBytes() );
-                        // String response = (new String ( fc.receive() ) );
-                        // System.out.println("infetados " + response);
-                        // response = (new String ( fc.receive() ) );
-                        // System.out.println("visitantes " + response);
+
                         int [][] infec = new int[N][N];
                         System.out.println("infetados");
                         for (int i=0;i<N ;i++ ) {
@@ -307,13 +268,6 @@ public class Menus {
                             }
                             System.out.print("\n");
                         }
-
-
-                        // out.println("mapa " + username);
-                        // String response = in.readLine();
-                        // System.out.println("infetados" + response);
-                        // response = in.readLine();
-                        // System.out.println("visitantes" + response);
 
                         break;
                     case "0"://quit
