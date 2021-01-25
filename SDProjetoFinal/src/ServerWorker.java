@@ -113,27 +113,28 @@ public class ServerWorker implements Runnable{
     private void move(String user, String x ,String y, PrintWriter out)
     {   // o move devolde um bool, se falso faz wait, se true faz signal all
 
-        Condition cond = this.sa.getCond();
-        Lock l = this.sa.getLock();
-        l.lock();
+        //Condition cond = this.sa.getCond();
+        //Lock l = this.sa.getLock();
+        //l.lock();
         try{
             while( !this.sa.move(Integer.parseInt(x),Integer.parseInt(y),user) ){
                 out.println("move 0"); //isto acontece se NAO se puder mover
                 out.flush();
                 System.out.println("antes do  wait");
-                cond.await();
+                //cond.await();
+                Thread.sleep(500);
             }
             out.println("move 1");
             out.flush();
-            cond.signalAll();
+            //cond.signalAll();
         }
         catch(Exception e)
         {
             e.printStackTrace();
-        }finally
-        {
-             l.unlock();
-        }
+        }//finally
+        //{
+        //     l.unlock();
+        //}
         
     }
 

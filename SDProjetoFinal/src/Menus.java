@@ -170,7 +170,7 @@ public class Menus {
             System.out.println("antes do while do move");
             while( in.readLine().equals("move 0") )//resposta: 0: nao pode mover, 1: moveu
             {
-                System.out.println("pfv espera");
+                ;
             }
             System.out.println("ja se pode mover");
         }catch (Exception e){
