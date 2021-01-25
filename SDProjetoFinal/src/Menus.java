@@ -33,7 +33,7 @@ public class Menus {
         System.out.println("    |     1 - Move           |");
         System.out.println("    |     2 - Infetado       |");
         System.out.println("    |     3 - Nr Pessoas     |");
-        System.out.println("    |     3 - Mapa infetados |");
+        System.out.println("    |     4 - Mapa infetados |");
         System.out.println("    |     0 - Sair           |");
         System.out.println("    =========================\n");
     }
@@ -84,7 +84,7 @@ public class Menus {
             out.flush();
             System.out.println("client antes da resposta");
             response = in.readLine(); // responde 0 para log in correto, ou 1 para username errado, 2 para pass errada, 3 infetado, 4 vip
-            System.out.println("client depois da resposta");
+            System.out.println("client depois da resposta" + response);
             switch (response) {
                 case "login 1":
                     System.out.println("pass incorreta");
@@ -102,7 +102,7 @@ public class Menus {
                     afterLogin(in, out, systemIn, username);
                     break;
                 default:
-                    System.out.println("opcao invalida");
+                    System.out.println("opcao invalida" + response);
                     break;
             }
 
@@ -246,6 +246,10 @@ public class Menus {
                     case "4": // mostra o mapa
                         out.println("mapa " + username);
                         String response = in.readLine();
+                        System.out.println("infetados" + response);
+                        response = in.readLine();
+                        System.out.println("visitantes" + response);
+
                         break;
                     case "0"://quit
                         quit = true;

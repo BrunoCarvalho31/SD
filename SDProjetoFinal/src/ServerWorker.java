@@ -4,8 +4,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import Exceptions.*;
 
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.*;
 
 public class ServerWorker implements Runnable{
     private final Socket socket;
@@ -49,6 +48,8 @@ public class ServerWorker implements Runnable{
                         break;
                     case "makeVIP":
                         this.sa.tornarVIP(args[1]);
+                    case "mapa":
+                        getMapas(args[1],out);
                     default :
                         break;
                 }
@@ -69,23 +70,29 @@ public class ServerWorker implements Runnable{
             if(vip)
             {
                 out.println("login 4");
+                System.out.println("dentro do log4");
+                out.flush();
             }
             else
             {
                out.println("login 0");
+               System.out.println("dentro do log0");
+               out.flush();
             }
-            out.flush();
 
         } catch(PassIncorretaException e) {
             out.println("login 1");
+            System.out.println("dentro do log1");
             out.flush();
         
         } catch(NomeNaoExisteException e) {
             out.println("login 2");
+            System.out.println("dentro do log2");
             out.flush();
 
         } catch(UtilizadorInfetadoException e) {
             out.println("login 3");
+            System.out.println("dentro do log3");
             out.flush();
         }
     }
@@ -105,8 +112,9 @@ public class ServerWorker implements Runnable{
 
     private void move(String user, String x ,String y, PrintWriter out)
     {   // o move devolde um bool, se falso faz wait, se true faz signal all
-        ReentrantLock l = new ReentrantLock();
-        Condition cond = l.newCondition();
+
+        Condition cond = this.sa.getCond();
+        Lock l = this.sa.getLock();
         l.lock();
         try{
             while( !this.sa.move(Integer.parseInt(x),Integer.parseInt(y),user) ){
@@ -124,7 +132,7 @@ public class ServerWorker implements Runnable{
             e.printStackTrace();
         }finally
         {
-            l.unlock();
+             l.unlock();
         }
         
     }
@@ -145,4 +153,22 @@ public class ServerWorker implements Runnable{
         }
     }
 
+    private void getMapas(String nome, PrintWriter out)
+    {   
+        try{
+            int [][] infec = this.sa.getMapaDoentes(nome);
+            int [][] vis = this.sa.getMapaVisitantes(nome);
+            out.println(infec);
+            out.flush();
+            out.println(vis);
+            out.flush();    
+        }catch(UtilizadorInfetadoException e)
+        {
+            out.println("utilizador infetado");
+            out.flush();
+            out.println("");
+            out.flush();
+        }
+        
+    }
 }

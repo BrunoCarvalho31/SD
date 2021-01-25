@@ -5,15 +5,16 @@ import Exceptions.UtilizadorInfetadoException;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.*;
 
 public class StayAway {
 
+    private static int N = 10;
     // quase a certeza que os PW nao sao precisos por isso ta tudo comentado e depois apaga-se
     //private PrintWriter pw;
     private final Map<String,User> users;
     private final ReadWriteLock lockSA = new ReentrantReadWriteLock();
+    private final Lock l = new ReentrantLock();
 
     public StayAway(){
         this.users = new HashMap<>();
@@ -22,6 +23,14 @@ public class StayAway {
     public ReadWriteLock getReadWriteLock(){
         return this.lockSA;
     }
+
+    public Condition getCond(){
+        return this.l.newCondition();
+    }
+
+    public Lock getLock(){
+        return this.l;
+    } 
 
     public void register (String nome, String pass) throws NomeExistenteException{
         //pw.println("registar " + nome + " " + pass);
@@ -44,7 +53,7 @@ public class StayAway {
         try{
             this.lockSA.readLock().lock();
 
-            if(users.get(nome).equals(null) ){
+            if( users.get(nome)==null ){
                 throw new NomeNaoExisteException("Nome nao encontrado.");
             }
             else if( !(users.get(nome).checkPass(pass) ) ){
@@ -129,8 +138,53 @@ public class StayAway {
         return r;
     }
 
-    public void getMapa(){
+    public int[][] getMapaDoentes(String nome) throws UtilizadorInfetadoException{
+        int[][] matrizDoentes = new int[N][N];
 
+        try{
+            this.lockSA.readLock().lock();
+            if( this.users.get(nome).isDoente()) {
+                throw (new UtilizadorInfetadoException("") );
+            }
+        }
+        finally {
+            this.lockSA.readLock().unlock();
+        }
+
+        for(User u : this.users.values())
+        {
+            for(int i = 0;i<u.getCaminhoX().size();i++ )
+            {
+                if(u.isDoente())
+                {
+                    matrizDoentes[u.getCaminhoX().get(i)][u.getCaminhoY().get(i)]++;
+                }
+            } 
+        }
+        return matrizDoentes;
+    }
+
+    public int[][] getMapaVisitantes(String nome) throws UtilizadorInfetadoException{
+        int[][] matrizVisitantes = new int[N][N];
+
+        try{
+            this.lockSA.readLock().lock();
+            if( this.users.get(nome).isDoente()) {
+                throw (new UtilizadorInfetadoException("") );
+            }
+        }
+        finally {
+            this.lockSA.readLock().unlock();
+        }
+
+        for(User u : this.users.values())
+        {
+            for(int i = 0;i<u.getCaminhoX().size();i++ )
+            {
+                matrizVisitantes[u.getCaminhoX().get(i)][u.getCaminhoY().get(i)]++;
+            } 
+        }
+        return matrizVisitantes;
     }
 
     public boolean isVIP(String username) {
@@ -139,6 +193,7 @@ public class StayAway {
 
     public void tornarVIP(String username){
         this.users.get(username).setVIP(true);
+        System.out.println("tornei vip" +  this.users.get(username).VIP());
     }
 
     public void infected(String user) {
