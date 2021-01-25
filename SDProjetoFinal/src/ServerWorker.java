@@ -11,6 +11,7 @@ public class ServerWorker implements Runnable{
     private Socket socket;
     private StayAway sa;
     private String user;
+    private Condition cond;
 
     public ServerWorker(Socket socket, StayAway sa) {
         this.socket=socket;
@@ -106,20 +107,26 @@ public class ServerWorker implements Runnable{
 
     private void move(String user, String x ,String y, PrintWriter out)
     {   // o move devolde um bool, se falso faz wait, se true faz signal all
+        private ReentrantLock l = new ReentrantLock();
+        Condition cond = l.newContidion();
+        l.lock();
         try{
             while( !this.sa.move(Integer.parseInt(x),Integer.parseInt(y),user) ){
                 out.println("move 0"); //isto acontece se NAO se puder mover
                 out.flush();
                 System.out.println("antes do  wait");
-                //wait();
+                cond.wait();
             }
             out.println("move 1");
             out.flush();
-            //notifyAll();
+            cond.signalAll();
         }
         catch(Exception e)
         {
             e.printStackTrace();
+        }finally
+        {
+            l.unlock();
         }
         
     }
@@ -128,6 +135,7 @@ public class ServerWorker implements Runnable{
     {
         this.sa.infected(user);
     }
+    
     private void nrpeople(String user, String cx, String cy, PrintWriter out){
         try {
             int n = this.sa.numeroPessoasLocalizacao(user,Integer.parseInt(cx),Integer.parseInt(cy));
