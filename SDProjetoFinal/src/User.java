@@ -23,6 +23,10 @@ public class User {
         this.caminhoY = new ArrayList<Integer>();
     }
 
+    public boolean checkPass(String  pass){
+        return this.pass.equals(pass);
+    }
+
     public String getNome() {
         return nome;
     }
@@ -85,5 +89,16 @@ public class User {
 
     public void setCaminhoY(List<Integer> caminhoY) {
         this.caminhoY = caminhoY;
+    }
+
+    public boolean isIn(int x,  int y){
+        return x==this.x && y==this.y;
+    }
+
+    public void move(int x, int y){
+        this.caminhoX.add(x);
+        this.caminhoY.add(y);
+        this.x=x;
+        this.y=y;
     }
 }

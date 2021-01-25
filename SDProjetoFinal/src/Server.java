@@ -12,9 +12,13 @@ public class Server{
 
         while(true)
         {
+            System.out.println("inicio do loop");
             Socket socket = ss.accept();
+            System.out.println("sicket aceite");
             Thread worker = new Thread(new ServerWorker(socket, sa));
             worker.start();
+            System.out.println("worker started end of loop");
+
         }
     }
 }

@@ -16,16 +16,13 @@ public class Client {
             BufferedReader systemIn = new BufferedReader(new InputStreamReader(System.in));
 
             String userInput;
-
-            Menus.inicial(socket, in, out, systemIn);
-
-            while ((userInput = systemIn.readLine()) != null) {
-                out.println(userInput);
-                out.flush();
-
-                String response = in.readLine();
-                System.out.println("Server response: " + response);
+            try{
+                Menus.inicial(socket, in, out, systemIn);
+            }finally{
+                System.out.println("coexao perdida");
             }
+
+
 
             socket.shutdownOutput();
             socket.shutdownInput();

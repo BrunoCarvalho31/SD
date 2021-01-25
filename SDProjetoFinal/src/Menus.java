@@ -4,7 +4,9 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 
+
 public class Menus {
+    static String codigovip="12345";
 
     private static void menu() {
         System.out.println("\n\n###    Menu Inicial   ###");
@@ -45,7 +47,6 @@ public class Menus {
             boolean quit = false;
             int cx;
             int cy;
-            menu();
             while (!quit) {
                 menu();
                 userInput = systemIn.readLine();
@@ -64,6 +65,11 @@ public class Menus {
                         break;
                 }
             }
+
+            socket.shutdownOutput();
+            socket.shutdownInput();
+            socket.close();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -81,22 +87,24 @@ public class Menus {
             System.out.println("pass:");
             String pass = systemIn.readLine();
             out.println("login " + username + " " + pass);
+            out.flush();
+            System.out.println("client antes da resposta");
             response = in.readLine(); // responde 0 para log in correto, ou 1 para username errado, 2 para pass errada, 3 infetado, 4 vip
-
+            System.out.println("client depois da resposta");
             switch (response) {
-                case "1":
-                    System.out.println("nome incorreto");
-                    break;
-                case "2":
+                case "login 1":
                     System.out.println("pass incorreta");
                     break;
-                case "3":
+                case "login 2":
+                    System.out.println("nome inixistente");
+                    break;
+                case "login 3":
                     System.out.println("infetado");
                     break;
-                case "4":
+                case "login 4":
                     afterLoginVIP(socket, in, out, systemIn,username);
                     break;
-                case "0":
+                case "login 0":
                     afterLogin(socket, in, out, systemIn, username);
                     break;
                 default:
@@ -116,25 +124,35 @@ public class Menus {
             String username = systemIn.readLine();
             System.out.println("pass:");
             String pass = systemIn.readLine();
+
             out.println("register " + username + " " + pass);
+            out.flush();
 
             String response = in.readLine(); // responde 0 para registar correto, ou username ja existe
 
             switch (response) {
-                case "1":
+                case "register 0":
                     System.out.println("registo com sucesso");
                     System.out.println("E VIP ? (y or n)");
                     String isvip = systemIn.readLine();
-                    if(isvip == "y"){
+                    if(isvip.equals("y") ){
                         System.out.println("Digite o codigo");
                         String code = systemIn.readLine();
-                        String codigovip = "12345";
-                        if (code == codigovip){
-                            StayAway.tornarVIP(username);
+                        if (code.equals(codigovip) ){
+                            //StayAway.tornarVIP(username);
+                            out.println("makeVIP " + username);
+                            out.flush();
+                            System.out.println("codigo correto");
+                        }
+                        else{
+                            System.out.println("codigo incorreto, a a conta foi criada como utilizador normal");
                         }
                     }
+                    else if(!isvip.equals("n")){
+                        System.out.println("opcap invalida, a a conta foi criada como utilizador normal");
+                    }
                     break;
-                case "2":
+                case "register 1":
                     System.out.println("username ja existe");
                     break;
                 default:
@@ -154,11 +172,11 @@ public class Menus {
             System.out.println("coord y:");
             int cy = Integer.parseInt(systemIn.readLine());
             out.println("move " + username + " " + cx + " " + cy);
-            String response = in.readLine();
-            while (response.equals("0"))//resposta: 0: nao pode mover, 1: moveu
+            out.flush();
+            System.out.println("antes do while do move");
+            while( in.readLine().equals("move 0") )//resposta: 0: nao pode mover, 1: moveu
             {
                 System.out.println("pfv espera");
-                response = in.readLine();
             }
             System.out.println("ja se pode mover");
         }catch (Exception e){
@@ -174,6 +192,7 @@ public class Menus {
             System.out.println("coord y:");
             int cy = Integer.parseInt(systemIn.readLine());
             out.println("nrpeople " + username + " " + cx + " " + cy);
+            out.flush();
             String response = in.readLine();
             System.out.println(response);
         }catch (Exception e){
@@ -231,7 +250,7 @@ public class Menus {
                         nrPessoas(socket, in, out, systemIn, username);
                         break;
                     case "4": // mostra o mapa
-                        out.println("mapa");
+                        out.println("mapa " + username);
                         String response = in.readLine();
                         break;
                     case "0"://quit
