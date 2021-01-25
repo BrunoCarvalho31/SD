@@ -72,14 +72,17 @@ public class StayAway {
             count = 0;
             for(User u: this.users.values() ){
                 if (u.isIn(x,y))
+                {
                     System.out.println(x +" " + y +"%%" +u.getX() + " " + u.getY() );
                     count++;
+                }
+                    
             }
         }
         finally {
             this.lockSA.readLock().unlock();
         }
-        System.out.println("fim do nrpessoas loc");
+        System.out.println("fim do nrpessoas loc com count " + count);
         return count;
     }
 
@@ -90,7 +93,7 @@ public class StayAway {
                     throw (new UtilizadorInfetadoException("") );
                 }
                 this.users.get(nome).move(x,y);
-                notifyAll();
+                //notifyAll();
         }
         finally {
             this.lockSA.writeLock().unlock();
@@ -100,7 +103,7 @@ public class StayAway {
     // dar intencao de se mover para a posicao x,y, receve notificacao de quando estiver vazia
     public boolean move(int x , int y, String nome) throws UtilizadorInfetadoException {
         boolean r;
-        System.out.println("inicio do move");
+        System.out.println("inicio do move SA");
         try{
             this.lockSA.readLock().lock();
             if( this.users.get(nome).isDoente()) {
@@ -111,10 +114,10 @@ public class StayAway {
             this.lockSA.readLock().unlock();
         }
 
-
-        if(numeroPessoasLocalizacao(nome,x,y)==0)
+        System.out.println("nr de poessoas nas coordenadas dadas é"+ numeroPessoasLocalizacao(nome,x,y) ) ;
+        if(numeroPessoasLocalizacao(nome,x,y)==0 )
         {
-            System.out.println("dentro do if do move");
+            System.out.println("dentro do if do move SA");
             novaLocalizacaoAtual(x,y,nome);
             r = true;
         }
@@ -122,7 +125,7 @@ public class StayAway {
             r = false;
         }
         
-        System.out.println("fim do move");
+        System.out.println("fim do move" + r);
         return r;
     }
 

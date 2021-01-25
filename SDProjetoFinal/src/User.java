@@ -91,8 +91,9 @@ public class User {
         this.caminhoY = caminhoY;
     }
 
-    public boolean isIn(int x,  int y){
-        return x==this.x && y==this.y;
+    public boolean isIn(int xx,  int yy){
+        System.out.println("oq ue foi ao users " + xx +" " + yy +"%%" +this.x + " " + this.y + (xx==this.x && yy==this.y));
+        return xx==this.x && yy==this.y;
     }
 
     public void move(int x, int y){
