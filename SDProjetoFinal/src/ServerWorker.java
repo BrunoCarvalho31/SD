@@ -5,13 +5,14 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import Exceptions.*;
-import java.util.concurrent.locks.ReadWriteLock;
+
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class ServerWorker implements Runnable{
     private Socket socket;
     private StayAway sa;
     private String user;
-    private Condition cond;
 
     public ServerWorker(Socket socket, StayAway sa) {
         this.socket=socket;
@@ -107,15 +108,15 @@ public class ServerWorker implements Runnable{
 
     private void move(String user, String x ,String y, PrintWriter out)
     {   // o move devolde um bool, se falso faz wait, se true faz signal all
-        private ReentrantLock l = new ReentrantLock();
-        Condition cond = l.newContidion();
+        ReentrantLock l = new ReentrantLock();
+        Condition cond = l.newCondition();
         l.lock();
         try{
             while( !this.sa.move(Integer.parseInt(x),Integer.parseInt(y),user) ){
                 out.println("move 0"); //isto acontece se NAO se puder mover
                 out.flush();
                 System.out.println("antes do  wait");
-                cond.wait();
+                cond.await();
             }
             out.println("move 1");
             out.flush();
