@@ -19,8 +19,8 @@ public class User {
         this.y = y;
         this.doente = false;
         this.vip = vip;
-        this.caminhoX = new ArrayList<Integer>();
-        this.caminhoY = new ArrayList<Integer>();
+        this.caminhoX = new ArrayList<>();
+        this.caminhoY = new ArrayList<>();
     }
 
     public boolean checkPass(String  pass){

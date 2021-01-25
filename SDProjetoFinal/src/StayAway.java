@@ -12,8 +12,8 @@ public class StayAway {
 
     // quase a certeza que os PW nao sao precisos por isso ta tudo comentado e depois apaga-se
     //private PrintWriter pw;
-    private Map<String,User> users;
-    private ReadWriteLock lockSA = new ReentrantReadWriteLock();
+    private final Map<String,User> users;
+    private final ReadWriteLock lockSA = new ReentrantReadWriteLock();
 
     public StayAway(){
         this.users = new HashMap<>();
@@ -50,7 +50,7 @@ public class StayAway {
             else if( !(users.get(nome).checkPass(pass) ) ){
                 throw new PassIncorretaException("Password incorreta.");
             }
-            else if(users.get(nome).isDoente() == true){
+            else if(users.get(nome).isDoente()){
                 throw new UtilizadorInfetadoException("Encontra-se infetado");
             }
         }

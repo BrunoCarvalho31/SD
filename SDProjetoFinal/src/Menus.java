@@ -1,5 +1,4 @@
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
@@ -45,17 +44,15 @@ public class Menus {
         try {
             String userInput;
             boolean quit = false;
-            int cx;
-            int cy;
             while (!quit) {
                 menu();
                 userInput = systemIn.readLine();
                 switch (userInput) {
                     case "1": //login
-                        caseLogin(socket,in,out,systemIn);
+                        caseLogin(in,out,systemIn);
                         break;
                     case "2": //registar
-                        caseSignUp(socket,in,out,systemIn);
+                        caseSignUp(in,out,systemIn);
                         break;
                     case "0": //quit
                         quit = true;
@@ -76,12 +73,9 @@ public class Menus {
     }
 
 
-    public static void caseLogin(Socket socket, BufferedReader in, PrintWriter out, BufferedReader systemIn){
+    public static void caseLogin(BufferedReader in, PrintWriter out, BufferedReader systemIn){
         try{
             String response;
-            int cx = 0;
-            int cy = 0;
-
             System.out.println("username:");
             String username = systemIn.readLine();
             System.out.println("pass:");
@@ -102,10 +96,10 @@ public class Menus {
                     System.out.println("infetado");
                     break;
                 case "login 4":
-                    afterLoginVIP(socket, in, out, systemIn,username);
+                    afterLoginVIP(in, out, systemIn,username);
                     break;
                 case "login 0":
-                    afterLogin(socket, in, out, systemIn, username);
+                    afterLogin(in, out, systemIn, username);
                     break;
                 default:
                     System.out.println("opcao invalida");
@@ -118,7 +112,7 @@ public class Menus {
     }
 
 
-    public static void caseSignUp(Socket socket, BufferedReader in, PrintWriter out, BufferedReader systemIn){
+    public static void caseSignUp( BufferedReader in, PrintWriter out, BufferedReader systemIn){
         try {
             System.out.println("username:");
             String username = systemIn.readLine();
@@ -165,7 +159,7 @@ public class Menus {
     }
 
 
-    public static void move(Socket socket,BufferedReader in,PrintWriter out,BufferedReader systemIn,String username ){
+    public static void move(BufferedReader in,PrintWriter out,BufferedReader systemIn,String username ){
         try {
             System.out.println("coord x:");
             int cx = Integer.parseInt(systemIn.readLine());
@@ -185,7 +179,7 @@ public class Menus {
     }
 
 
-    public static void nrPessoas(Socket socket,BufferedReader in,PrintWriter out,BufferedReader systemIn,String username ){
+    public static void nrPessoas(BufferedReader in,PrintWriter out,BufferedReader systemIn,String username ){
         try {
             System.out.println("coord x:");
             int cx = Integer.parseInt(systemIn.readLine());
@@ -201,7 +195,7 @@ public class Menus {
     }
 
 
-    public static void afterLogin(Socket socket,BufferedReader in,PrintWriter out,BufferedReader systemIn, String username){
+    public static void afterLogin(BufferedReader in,PrintWriter out,BufferedReader systemIn, String username){
         try {
             boolean quit = false;
             while (!quit) {
@@ -209,14 +203,14 @@ public class Menus {
                 String userInput = systemIn.readLine();
                 switch (userInput) {
                     case "1"://move
-                        move(socket, in, out, systemIn,username);
+                        move(in, out, systemIn,username);
                         break;
                     case "2"://infetado
                         out.println("infected " + username);
                         quit = true;
                         break;
                     case "3"://nrpessoas
-                        nrPessoas(socket, in, out, systemIn, username);
+                        nrPessoas(in, out, systemIn, username);
                         break;
                     case "0"://quit
                         quit = true;
@@ -232,7 +226,7 @@ public class Menus {
     }
 
 
-    public static void afterLoginVIP(Socket socket,BufferedReader in,PrintWriter out,BufferedReader systemIn,String username){
+    public static void afterLoginVIP(BufferedReader in,PrintWriter out,BufferedReader systemIn,String username){
         try {
             boolean quit = false;
             while (!quit) {
@@ -240,14 +234,14 @@ public class Menus {
                 String userInput = systemIn.readLine();
                 switch (userInput) {
                     case "1"://move
-                        move(socket, in, out, systemIn, username);
+                        move(in, out, systemIn, username);
                         break;
                     case "2"://infetado
                         out.println("infected " + username);
                         quit = true;
                         break;
                     case "3"://nrpessoas
-                        nrPessoas(socket, in, out, systemIn, username);
+                        nrPessoas(in, out, systemIn, username);
                         break;
                     case "4": // mostra o mapa
                         out.println("mapa " + username);

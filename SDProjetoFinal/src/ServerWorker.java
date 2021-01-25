@@ -1,8 +1,6 @@
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
 import Exceptions.*;
 
@@ -10,8 +8,8 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ServerWorker implements Runnable{
-    private Socket socket;
-    private StayAway sa;
+    private final Socket socket;
+    private final StayAway sa;
     private String user;
 
     public ServerWorker(Socket socket, StayAway sa) {
@@ -60,7 +58,7 @@ public class ServerWorker implements Runnable{
             socket.shutdownInput();
             socket.close();
         }catch(Exception e){
-            e.printStackTrace();;
+            e.printStackTrace();
         }
     }
 
@@ -71,14 +69,13 @@ public class ServerWorker implements Runnable{
             if(vip)
             {
                 out.println("login 4");
-                out.flush();
             }
             else
             {
                out.println("login 0");
-               out.flush();
             }
-            
+            out.flush();
+
         } catch(PassIncorretaException e) {
             out.println("login 1");
             out.flush();
