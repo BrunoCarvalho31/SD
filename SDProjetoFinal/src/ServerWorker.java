@@ -24,16 +24,13 @@ public class ServerWorker implements Runnable{
     public void run() {
         try {
             FramedConnection fc = new FramedConnection(socket);
-
-            System.out.println("sou o novo thread");
             String line= new String ( fc.receive() ) ;
 
             //main cicle
             while (line!=null) {
                 System.out.println("\n" + line + " esta foi a linha recebida");
-                String[] args = line.split(" ");   // em principio isto separa a string em string novas com o delimitador de espaco
-                                                    // é possivel que seja melhor em vez do espaco usar um simbolo como delimitador ou ser mesmo fancy e meter tipo \e (corresponde ao caracter do escape)
-                
+                String[] args = line.split(" ");   
+
                 switch (args[0]){
                     case "login":
                         login(args[1],args[2],fc);
@@ -77,10 +74,7 @@ public class ServerWorker implements Runnable{
                 boolean vip = sa.isVIP(username);
                 if(vip)
                 {
-                    //out.println("login 4");
                     fc.send("loginVIP".getBytes());
-                    //System.out.println("dentro do log4");
-                    //out.flush();
                 }
                 else
                 {
@@ -119,17 +113,11 @@ public class ServerWorker implements Runnable{
     private void move(String user, String x ,String y, FramedConnection fc)
     {   // o move devolde um bool, se falso faz wait, se true faz signal all
 
-        //Condition cond = this.sa.getCond();
-        //Lock l = this.sa.getLock();
-        //l.lock();
         try{
             while( !this.sa.move(Integer.parseInt(x),Integer.parseInt(y),user) ){
                 fc.send("move 0".getBytes());
-                //out.println("move 0"); //isto acontece se NAO se puder mover
-                //out.flush();
-                System.out.println("antes do  wait");
-                //cond.await();
                 Thread.sleep(500);
+                //cond.await();
             }
             fc.send("move 1".getBytes());
             //cond.signalAll();
@@ -137,10 +125,7 @@ public class ServerWorker implements Runnable{
         catch(Exception e)
         {
             e.printStackTrace();
-        }//finally
-        //{
-        //     l.unlock();
-        //}
+        }
         
     }
 
@@ -156,8 +141,6 @@ public class ServerWorker implements Runnable{
                 fc.send(("exitem " + n + " pessoas nessa localizacao").getBytes()  );
             }catch(UtilizadorInfetadoException e) {
                 fc.send("utilizador infetado".getBytes());
-            //out.println("utilizador infetado");
-            //out.flush();
             }
 
         }catch(Exception e){
@@ -182,12 +165,6 @@ public class ServerWorker implements Runnable{
                         fc.send( (vis[i][j]+"").getBytes() );
                     }
                 }
-                
-
-
-                System.out.println(vis[0][0]);
-                fc.send( Arrays.toString(infec).getBytes());
-                fc.send( Arrays.toString(vis).getBytes());
 
             }catch(UtilizadorInfetadoException e)
             {

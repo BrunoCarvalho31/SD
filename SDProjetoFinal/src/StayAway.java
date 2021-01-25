@@ -10,8 +10,6 @@ import java.util.concurrent.locks.*;
 public class StayAway {
 
     private static int N = 10;
-    // quase a certeza que os PW nao sao precisos por isso ta tudo comentado e depois apaga-se
-    //private PrintWriter pw;
     private final Map<String,User> users;
     private final ReadWriteLock lockSA = new ReentrantReadWriteLock();
     private final Lock l = new ReentrantLock();
@@ -33,8 +31,6 @@ public class StayAway {
     } 
 
     public void register (String nome, String pass) throws NomeExistenteException{
-        //pw.println("registar " + nome + " " + pass);
-        //pw.flush();
         try {
             this.lockSA.writeLock().lock();
             if( users.containsKey(nome) )
@@ -71,7 +67,6 @@ public class StayAway {
     public int numeroPessoasLocalizacao(String user, int x, int y) throws UtilizadorInfetadoException {
         int count;
 
-        System.out.println("inicio do nrpessoas loc");
         try{
             this.lockSA.readLock().lock();
             if(this.users.get(user).isDoente())
@@ -82,7 +77,6 @@ public class StayAway {
             for(User u: this.users.values() ){
                 if (u.isIn(x,y))
                 {
-                    System.out.println(x +" " + y +"%%" +u.getX() + " " + u.getY() );
                     count++;
                 }
                     
@@ -91,7 +85,6 @@ public class StayAway {
         finally {
             this.lockSA.readLock().unlock();
         }
-        System.out.println("fim do nrpessoas loc com count " + count);
         return count;
     }
 
@@ -102,7 +95,6 @@ public class StayAway {
                     throw (new UtilizadorInfetadoException("") );
                 }
                 this.users.get(nome).move(x,y);
-                //notifyAll();
         }
         finally {
             this.lockSA.writeLock().unlock();
@@ -112,7 +104,6 @@ public class StayAway {
     // dar intencao de se mover para a posicao x,y, receve notificacao de quando estiver vazia
     public boolean move(int x , int y, String nome) throws UtilizadorInfetadoException {
         boolean r;
-        System.out.println("inicio do move SA");
         try{
             this.lockSA.readLock().lock();
             if( this.users.get(nome).isDoente()) {
@@ -123,10 +114,8 @@ public class StayAway {
             this.lockSA.readLock().unlock();
         }
 
-        System.out.println("nr de poessoas nas coordenadas dadas é"+ numeroPessoasLocalizacao(nome,x,y) ) ;
         if(numeroPessoasLocalizacao(nome,x,y)==0 )
         {
-            System.out.println("dentro do if do move SA");
             novaLocalizacaoAtual(x,y,nome);
             r = true;
         }
@@ -134,7 +123,6 @@ public class StayAway {
             r = false;
         }
         
-        System.out.println("fim do move" + r);
         return r;
     }
 
@@ -184,12 +172,6 @@ public class StayAway {
                 matrizVisitantes[u.getCaminhoX().get(i)][u.getCaminhoY().get(i)]++;
             } 
         }
-
-        for (int i=0;i<N ;i++ ) {
-            for (int j=0;j<N ;j++ ) {
-                System.out.println(matrizVisitantes[i][j]);
-            }
-        }
         return matrizVisitantes;
     }
 
@@ -199,7 +181,6 @@ public class StayAway {
 
     public void tornarVIP(String username){
         this.users.get(username).setVIP(true);
-        System.out.println("tornei vip" +  this.users.get(username).VIP());
     }
 
     public void infected(String user) {
