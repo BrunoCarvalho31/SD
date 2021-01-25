@@ -7,6 +7,8 @@ import java.net.Socket;
 public class Menus {
     static String codigovip="12345";
 
+    private static final int N=10;
+
     private static void menu() {
         System.out.println("\n\n###    Menu Inicial   ###");
         System.out.println("\n  =========================");
@@ -105,7 +107,7 @@ public class Menus {
                 case "login 3":
                     System.out.println("infetado");
                     break;
-                case "login 4":
+                case "loginVIP":
                     afterLoginVIP(fc, systemIn,username);
                     break;
                 case "login 0":
@@ -152,7 +154,8 @@ public class Menus {
                         String code = systemIn.readLine();
                         if (code.equals(codigovip) ){
                             //StayAway.tornarVIP(username);
-                            fc.send(("makeVIP " + username ).getBytes() );
+                            fc.send( ("makeVIP " + username ).getBytes() );
+
                             //fc.send(username.getBytes() );
 
                             System.out.println("codigo correto");
@@ -282,10 +285,29 @@ public class Menus {
 
                         fc.send(("mapa "+username).getBytes() );
                         //fc.send(username.getBytes() );
-                        String response = (new String ( fc.receive() ) );
-                        System.out.println("infetados" + response);
-                        response = (new String ( fc.receive() ) );
-                        System.out.println("visitantes" + response);
+                        // String response = (new String ( fc.receive() ) );
+                        // System.out.println("infetados " + response);
+                        // response = (new String ( fc.receive() ) );
+                        // System.out.println("visitantes " + response);
+                        int [][] infec = new int[N][N];
+                        System.out.println("infetados");
+                        for (int i=0;i<N ;i++ ) {
+                            for (int j=0;j<N ;j++ ) {
+                                infec[i][j]=Integer.parseInt(new String(fc.receive()));
+                                System.out.print(infec[i][j]+" ");
+                            }
+                            System.out.print("\n");
+                        }
+                        System.out.println("Visitados");
+                        int [][] vis = new int[N][N];
+                        for (int i=0;i<N ;i++ ) {
+                            for (int j=0;j<N ;j++ ) {
+                                vis[i][j]=Integer.parseInt(new String(fc.receive()));
+                                System.out.print(vis[i][j]+" ");
+                            }
+                            System.out.print("\n");
+                        }
+
 
                         // out.println("mapa " + username);
                         // String response = in.readLine();

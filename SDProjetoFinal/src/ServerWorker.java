@@ -13,6 +13,8 @@ public class ServerWorker implements Runnable{
     private final StayAway sa;
     private String user;
 
+    private static final int N =10;
+
     public ServerWorker(Socket socket, StayAway sa) {
         this.socket=socket;
         this.sa = sa;
@@ -50,8 +52,10 @@ public class ServerWorker implements Runnable{
                         break;
                     case "makeVIP":
                         this.sa.tornarVIP(args[1]);
+                        break;
                     case "mapa":
                         getMapas(args[1],fc);
+                        break;
                     default :
                         break;
                 }
@@ -74,7 +78,7 @@ public class ServerWorker implements Runnable{
                 if(vip)
                 {
                     //out.println("login 4");
-                    fc.send("login 4".getBytes());
+                    fc.send("loginVIP".getBytes());
                     //System.out.println("dentro do log4");
                     //out.flush();
                 }
@@ -155,7 +159,7 @@ public class ServerWorker implements Runnable{
             //out.println("utilizador infetado");
             //out.flush();
             }
-            
+
         }catch(Exception e){
             ;
         }
@@ -166,7 +170,22 @@ public class ServerWorker implements Runnable{
         try{
             try{
                 int [][] infec = this.sa.getMapaDoentes(nome);
+                for (int i=0;i<N ;i++ ) {
+                    for (int j=0;j<N ;j++ ) {
+                        fc.send( (infec[i][j]+"").getBytes() );
+                    }
+                }
+
                 int [][] vis = this.sa.getMapaVisitantes(nome);
+                for (int i=0;i<N ;i++ ) {
+                    for (int j=0;j<N ;j++ ) {
+                        fc.send( (vis[i][j]+"").getBytes() );
+                    }
+                }
+                
+
+
+                System.out.println(vis[0][0]);
                 fc.send( Arrays.toString(infec).getBytes());
                 fc.send( Arrays.toString(vis).getBytes());
 

@@ -21,6 +21,8 @@ public class User {
         this.vip = vip;
         this.caminhoX = new ArrayList<>();
         this.caminhoY = new ArrayList<>();
+        this.caminhoX.add(0);
+        this.caminhoY.add(0);
     }
 
     public boolean checkPass(String  pass){

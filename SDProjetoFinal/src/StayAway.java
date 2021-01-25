@@ -184,6 +184,12 @@ public class StayAway {
                 matrizVisitantes[u.getCaminhoX().get(i)][u.getCaminhoY().get(i)]++;
             } 
         }
+
+        for (int i=0;i<N ;i++ ) {
+            for (int j=0;j<N ;j++ ) {
+                System.out.println(matrizVisitantes[i][j]);
+            }
+        }
         return matrizVisitantes;
     }
 
